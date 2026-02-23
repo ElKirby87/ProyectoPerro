@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
@@ -35,6 +36,26 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+
+  // Última observación aceptada (robot y tag) en coordenadas 2D de campo.
+  // Volatile para acceso seguro desde comandos.
+  private volatile edu.wpi.first.math.geometry.Pose2d latestAcceptedRobotPose = null;
+  private volatile edu.wpi.first.math.geometry.Pose2d latestAcceptedTagPose = null;
+
+  /** Devuelve true si hay una observación válida de tag disponible. */
+  public boolean hasLatestTagObservation() {
+    return latestAcceptedRobotPose != null && latestAcceptedTagPose != null;
+  }
+
+  /** Pose2d del robot según la última medición de visión (en coordenadas de campo). */
+  public edu.wpi.first.math.geometry.Pose2d getLatestRobotPoseFromVision() {
+    return latestAcceptedRobotPose;
+  }
+
+  /** Pose2d del AprilTag usado por la última medición (en coordenadas de campo). */
+  public edu.wpi.first.math.geometry.Pose2d getLatestTagPose() {
+    return latestAcceptedTagPose;
+  }
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -146,6 +167,20 @@ public class Vision extends SubsystemBase {
             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
       }
 
+      // Store the first accepted robot pose + first tag pose for quick access by commands.
+      // Convert Pose3d -> Pose2d (x,y,yaw)
+      if (!robotPosesAccepted.isEmpty() && !tagPoses.isEmpty()) {
+        Pose3d r3 = robotPosesAccepted.get(0);
+        Pose3d t3 = tagPoses.get(0);
+        latestAcceptedRobotPose =
+            new Pose2d(r3.getX(), r3.getY(), new Rotation2d(r3.getRotation().getZ()));
+        latestAcceptedTagPose =
+            new Pose2d(t3.getX(), t3.getY(), new Rotation2d(t3.getRotation().getZ()));
+      } else {
+        latestAcceptedRobotPose = null;
+        latestAcceptedTagPose = null;
+      }
+
       // Log camera datadata
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
@@ -176,6 +211,16 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+  }
+
+  /** Devuelve la pose del AprilTag en coordenadas de campo si existe en el layout. */
+  public Optional<Pose2d> getFieldTagPose(int tagId) {
+    var maybe = aprilTagLayout.getTagPose(tagId);
+    if (maybe.isEmpty()) {
+      return Optional.empty();
+    }
+    Pose3d p3 = maybe.get();
+    return Optional.of(new Pose2d(p3.getX(), p3.getY(), new Rotation2d(p3.getRotation().getZ())));
   }
 
   @FunctionalInterface

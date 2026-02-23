@@ -175,6 +175,12 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+
+    // Mantén Y para mantener 3 m del tag id=1; strafear con leftX
+    controller
+        .y()
+        .whileTrue(
+            DriveCommands.joystickApproachTagById(drive, vision, 1, () -> controller.getLeftX()));
   }
 
   /**
