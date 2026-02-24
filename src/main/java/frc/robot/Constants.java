@@ -50,5 +50,9 @@ public final class Constants {
     public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
     public static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+
+    public static final double radialKp = 5.0;
+    public static final double radialKd = 0.0;
+    public static final double radialKi = 0.2;
   }
 }

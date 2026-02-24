@@ -103,7 +103,7 @@ public class Drive extends SubsystemBase {
   private Rotation2d gyroZero = Rotation2d.kZero;
 
   // If true, treat the robot's forward as reversed (add 180° to gyro-relative heading)
-  private boolean invertHeading = true;
+  private boolean invertHeading = false;
 
   /** Set whether the robot's forward is inverted (adds 180° to relative heading). */
   public void setInvertHeading(boolean invert) {

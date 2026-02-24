@@ -290,7 +290,11 @@ public class DriveCommands {
 
     final double desiredDistance = PositionConstants.desiredDistanceFromHub;
 
-    PIDController radialPID = new PIDController(1.4, 0.0, 0.2); // tunear en sim/real
+    PIDController radialPID =
+        new PIDController(
+            DriveConstants.radialKp,
+            DriveConstants.radialKi,
+            DriveConstants.radialKd); // tunear en sim/real
 
     ProfiledPIDController angleController =
         new ProfiledPIDController(
