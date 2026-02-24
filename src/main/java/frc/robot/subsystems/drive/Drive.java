@@ -98,6 +98,28 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
+  // Gyro-zero offset: when user presses Start we set this so subsequent control uses
+  // rotation relative to this saved zero.
+  private Rotation2d gyroZero = Rotation2d.kZero;
+
+  // If true, treat the robot's forward as reversed (add 180° to gyro-relative heading)
+  private boolean invertHeading = false;
+
+  /** Set whether the robot's forward is inverted (adds 180° to relative heading). */
+  public void setInvertHeading(boolean invert) {
+    this.invertHeading = invert;
+  }
+
+  /** Toggle invertHeading. */
+  public void toggleInvertHeading() {
+    this.invertHeading = !this.invertHeading;
+  }
+
+  /** Returns whether heading is inverted. */
+  public boolean isInvertHeading() {
+    return this.invertHeading;
+  }
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -355,5 +377,21 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  /** Set the current robot yaw as the "zero" reference for field-centric control. */
+  public void setGyroZeroToCurrent() {
+    gyroZero = getRotation();
+  }
+
+  /** Returns the stored gyro-zero rotation. */
+  public Rotation2d getGyroZero() {
+    return gyroZero;
+  }
+
+  /** Returns the robot rotation relative to the stored gyro-zero. */
+  public Rotation2d getGyroRelativeRotation() {
+    Rotation2d rel = getRotation().minus(gyroZero);
+    return invertHeading ? rel.plus(new Rotation2d(Math.PI)) : rel;
   }
 }

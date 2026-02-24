@@ -8,7 +8,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -169,18 +168,17 @@ public class RobotContainer {
     controller
         .start()
         .onTrue(
+            // Before: reset pose orientation. Now: define current robot angle as 0 for controls.
             Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    () -> {
+                      drive.setGyroZeroToCurrent();
+                    },
                     drive)
                 .ignoringDisable(true));
 
-    // Mantén Y para mantener 3 m del tag id=1; strafear con leftX
     controller
-        .y()
-        .whileTrue(
-            DriveCommands.joystickApproachTagById(drive, vision, 1, () -> controller.getLeftX()));
+        .rightBumper()
+        .whileTrue(DriveCommands.driveToHub(drive, 2, () -> controller.getLeftX()));
   }
 
   /**

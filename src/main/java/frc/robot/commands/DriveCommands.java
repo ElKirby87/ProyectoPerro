@@ -23,31 +23,23 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.PositionConstants;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class DriveCommands {
-  private static final double DEADBAND = 0.5;
-  private static final double ANGLE_KP = 10.0;
-  private static final double ANGLE_KD = 0.4;
-  private static final double ANGLE_MAX_VELOCITY = 8.0;
-  private static final double ANGLE_MAX_ACCELERATION = 20.0;
-  private static final double FF_START_DELAY = 2.0; // Secs
-  private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-  private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
-  private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
   private DriveCommands() {}
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
-    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
+    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
     Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
 
     // Square magnitude for more precise control
@@ -74,7 +66,8 @@ public class DriveCommands {
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
           // Apply rotation deadband
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+          double omega =
+              MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DriveConstants.DEADBAND);
 
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);
@@ -88,12 +81,12 @@ public class DriveCommands {
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
-          drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds,
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
+          // Use gyro-relative rotation (zeroed by Start)
+          Rotation2d baseRot =
+              isFlipped
+                  ? drive.getGyroRelativeRotation().plus(new Rotation2d(Math.PI))
+                  : drive.getGyroRelativeRotation();
+          drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, baseRot));
         },
         drive);
   }
@@ -108,14 +101,14 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       Supplier<Rotation2d> rotationSupplier) {
-
     // Create PID controller
     ProfiledPIDController angleController =
         new ProfiledPIDController(
-            ANGLE_KP,
+            DriveConstants.ANGLE_KP,
             0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+            DriveConstants.ANGLE_KD,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.ANGLE_MAX_VELOCITY, DriveConstants.ANGLE_MAX_ACCELERATION));
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Construct command
@@ -126,9 +119,11 @@ public class DriveCommands {
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
               // Calculate angular speed
+              // Use gyro-relative rotation as measurement for angle control
               double omega =
                   angleController.calculate(
-                      drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+                      drive.getGyroRelativeRotation().getRadians(),
+                      rotationSupplier.get().getRadians());
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =
@@ -139,17 +134,14 @@ public class DriveCommands {
               boolean isFlipped =
                   DriverStation.getAlliance().isPresent()
                       && DriverStation.getAlliance().get() == Alliance.Red;
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
+              Rotation2d baseRot =
+                  isFlipped
+                      ? drive.getGyroRelativeRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getGyroRelativeRotation();
+              drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, baseRot));
             },
             drive)
-
-        // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+        .beforeStarting(() -> angleController.reset(drive.getGyroRelativeRotation().getRadians()));
   }
 
   /**
@@ -176,7 +168,7 @@ public class DriveCommands {
                   drive.runCharacterization(0.0);
                 },
                 drive)
-            .withTimeout(FF_START_DELAY),
+            .withTimeout(DriveConstants.FF_START_DELAY),
 
         // Start timer
         Commands.runOnce(timer::restart),
@@ -184,7 +176,7 @@ public class DriveCommands {
         // Accelerate and gather data
         Commands.run(
                 () -> {
-                  double voltage = timer.get() * FF_RAMP_RATE;
+                  double voltage = timer.get() * DriveConstants.FF_RAMP_RATE;
                   drive.runCharacterization(voltage);
                   velocitySamples.add(drive.getFFCharacterizationVelocity());
                   voltageSamples.add(voltage);
@@ -217,7 +209,7 @@ public class DriveCommands {
 
   /** Measures the robot's wheel radius by spinning in a circle. */
   public static Command wheelRadiusCharacterization(Drive drive) {
-    SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
+    SlewRateLimiter limiter = new SlewRateLimiter(DriveConstants.WHEEL_RADIUS_RAMP_RATE);
     WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
     return Commands.parallel(
@@ -232,7 +224,7 @@ public class DriveCommands {
             // Turn in place, accelerating up to full speed
             Commands.run(
                 () -> {
-                  double speed = limiter.calculate(WHEEL_RADIUS_MAX_VELOCITY);
+                  double speed = limiter.calculate(DriveConstants.WHEEL_RADIUS_MAX_VELOCITY);
                   drive.runVelocity(new ChassisSpeeds(0.0, 0.0, speed));
                 },
                 drive)),
@@ -288,101 +280,109 @@ public class DriveCommands {
    * Mantiene distancia objetivo respecto a un AprilTag (por id) y alinea el heading con el tag. El
    * piloto sólo controla la componente tangencial (strafe) mediante tangentialSupplier.
    *
-   * <p>- desiredDistance = 3.0 m - desired heading = tag heading (ángulo relativo = 0)
+   * <p>/** Mantiene distancia objetivo (PositionConstants.desiredDistanceFromHub) respecto a una
+   * pose de hub y hace que el robot siempre mire hacia el centro del hub. El piloto sólo controla
+   * la componente tangencial (strafe) mediante tangentialSupplier para "orbitar".
+   *
+   * <p>- Usa odometría (drive.getPose()). La visión, cuando detecta tags, ya actualiza la odometría
+   * via drive.addVisionMeasurement, por lo que no es necesario que la cámara esté siempre visible
+   * mientras el comando funcione.
    */
-  public static Command joystickApproachTagById(
-      Drive drive,
-      frc.robot.subsystems.vision.Vision vision,
-      int tagId,
-      DoubleSupplier tangentialSupplier) {
+  public static Command driveToHub(Drive drive, Pose2d hubPose, DoubleSupplier tangentialSupplier) {
 
-    final double desiredDistance = 3.0; // metros
+    final double desiredDistance = PositionConstants.desiredDistanceFromHub;
 
-    PIDController radialPID = new PIDController(1.4, 0.0, 0.2); // tunear en robot real/sim
+    PIDController radialPID = new PIDController(1.4, 0.0, 0.2); // tunear en sim/real
 
     ProfiledPIDController angleController =
         new ProfiledPIDController(
-            ANGLE_KP,
+            DriveConstants.ANGLE_KP,
             0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+            DriveConstants.ANGLE_KD,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.ANGLE_MAX_VELOCITY, DriveConstants.ANGLE_MAX_ACCELERATION));
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     return Commands.run(
             () -> {
-              // Si no hay pose del tag o de visión, dejar pequeña libertad de strafe
-              Optional<Pose2d> maybeTagPose = vision.getFieldTagPose(tagId);
-              if (maybeTagPose.isEmpty() || !vision.hasLatestTagObservation()) {
-                double latInput =
-                    MathUtil.applyDeadband(tangentialSupplier.getAsDouble(), DEADBAND);
-                double tangentialSpeed =
-                    Math.copySign(latInput * latInput, latInput)
-                        * drive.getMaxLinearSpeedMetersPerSec();
-                ChassisSpeeds fallback =
-                    ChassisSpeeds.fromFieldRelativeSpeeds(
-                        new ChassisSpeeds(0.0, tangentialSpeed, 0.0), drive.getRotation());
-                drive.runVelocity(fallback);
-                return;
-              }
+              // Robot pose a partir de odometría (poseEstimator en Drive recibe mediciones de
+              // visión).
+              Pose2d robotPose = drive.getPose();
 
-              Pose2d tagPose = maybeTagPose.get();
-              Pose2d robotVisionPose = vision.getLatestRobotPoseFromVision();
-
-              // Vector tag -> robot en campo
-              Translation2d vec = robotVisionPose.getTranslation().minus(tagPose.getTranslation());
+              // Vector robot -> hub (campo)
+              Translation2d vec =
+                  hubPose.getTranslation().minus(robotPose.getTranslation()); // hub - robot
               double dist = Math.hypot(vec.getX(), vec.getY());
               if (dist < 1e-6) {
                 drive.runVelocity(new ChassisSpeeds(0, 0, 0));
                 return;
               }
 
-              // Radial (hacia/desde el tag) y tangencial unitarios
-              Translation2d radialUnit = new Translation2d(vec.getX() / dist, vec.getY() / dist);
+              Translation2d radialUnit =
+                  new Translation2d(vec.getX() / dist, vec.getY() / dist); // robot->hub
               Translation2d tangentialUnit =
                   new Translation2d(-radialUnit.getY(), radialUnit.getX());
 
-              // Control radial: PID sobre distancia actual al tag
+              // Radial PID: salida positiva => aumentar distancia (mover hacia radialUnit)
               double radialOutput = radialPID.calculate(dist, desiredDistance);
-              // radialUnit apunta tag->robot; para acercar debemos moverse hacia -radialUnit
-              Translation2d radialVelocity = radialUnit.times(-radialOutput);
+              Translation2d radialVelocity = radialUnit.times(radialOutput);
 
-              // Control tangencial manual
+              // Tangential control from driver
               double tangentialInput =
-                  MathUtil.applyDeadband(tangentialSupplier.getAsDouble(), DEADBAND);
+                  MathUtil.applyDeadband(tangentialSupplier.getAsDouble(), DriveConstants.DEADBAND);
               tangentialInput = Math.copySign(tangentialInput * tangentialInput, tangentialInput);
               double tangentialSpeed = tangentialInput * drive.getMaxLinearSpeedMetersPerSec();
               Translation2d tangentialVelocity = tangentialUnit.times(tangentialSpeed);
 
-              // Suma de velocidades lineales (campo)
+              // Linear velocity in field frame
               Translation2d linear = radialVelocity.plus(tangentialVelocity);
 
-              // --- NUEVO: calcular ángulo objetivo para QUE EL ROBOT MIRE AL TAG ---
-              // Deseado: robot facing the tag (point from robot -> tag)
+              // Desired yaw: robot must face the hub (point from robot -> hub)
               double desiredYawRad =
                   Math.atan2(
-                      tagPose.getTranslation().getY() - robotVisionPose.getTranslation().getY(),
-                      tagPose.getTranslation().getX() - robotVisionPose.getTranslation().getX());
-              // Calcular velocidad angular para girar hacia el tag
+                      hubPose.getTranslation().getY() - robotPose.getTranslation().getY(),
+                      hubPose.getTranslation().getX() - robotPose.getTranslation().getX());
+
+              // Convert desired yaw into gyro-relative frame used by controllers
+              double desiredYawRel = desiredYawRad - drive.getGyroZero().getRadians();
+              if (drive.isInvertHeading()) {
+                desiredYawRel += Math.PI;
+              }
+
               double omega =
-                  angleController.calculate(drive.getRotation().getRadians(), desiredYawRad);
+                  angleController.calculate(
+                      drive.getGyroRelativeRotation().getRadians(), desiredYawRel);
 
               ChassisSpeeds speeds = new ChassisSpeeds(linear.getX(), linear.getY(), omega);
               boolean isFlipped =
                   DriverStation.getAlliance().isPresent()
                       && DriverStation.getAlliance().get() == Alliance.Red;
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
+              Rotation2d baseRot =
+                  isFlipped
+                      ? drive.getGyroRelativeRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getGyroRelativeRotation();
+              drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, baseRot));
             },
             drive)
         .beforeStarting(
             () -> {
               radialPID.reset();
-              angleController.reset(drive.getRotation().getRadians());
+              angleController.reset(drive.getGyroRelativeRotation().getRadians());
             });
+  }
+
+  /** Conveniencia: elegir hub por índice 1 o 2 (usa HUB1_POSE/HUB2_POSE). */
+  public static Command driveToHub(Drive drive, int hubIndex, DoubleSupplier tangentialSupplier) {
+    Pose2d hub;
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
+      hub = PositionConstants.HUB2_POSE;
+    } else if (DriverStation.getAlliance().get() == Alliance.Red) {
+      hub = PositionConstants.HUB1_POSE;
+    } else {
+      // Fallback si no hay alliance (ej. en sim sin DS): usar HUB1 por defecto
+      hub = PositionConstants.HUB1_POSE;
+    }
+    return driveToHub(drive, hub, tangentialSupplier);
   }
 
   private static class WheelRadiusCharacterizationState {

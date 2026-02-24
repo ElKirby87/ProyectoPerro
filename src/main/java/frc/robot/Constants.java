@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -27,5 +29,24 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public static class PositionConstants {
+    public static final double desiredDistanceFromHub = 3.0;
+
+    public static Pose2d HUB2_POSE = new Pose2d(4.65, 4.0, new Rotation2d()); // Blue hub
+    public static Pose2d HUB1_POSE = new Pose2d(12.0, 4.0, new Rotation2d()); // Red hub
+  }
+
+  public static class DriveConstants {
+    public static final double DEADBAND = 0.2;
+    public static final double ANGLE_KP = 50.0;
+    public static final double ANGLE_KD = 1.0;
+    public static final double ANGLE_MAX_VELOCITY = 8.0;
+    public static final double ANGLE_MAX_ACCELERATION = 20.0;
+    public static final double FF_START_DELAY = 2.0;
+    public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
+    public static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
+    public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
   }
 }
