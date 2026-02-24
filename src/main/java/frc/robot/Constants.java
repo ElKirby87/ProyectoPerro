@@ -36,6 +36,8 @@ public final class Constants {
 
     public static Pose2d HUB2_POSE = new Pose2d(4.65, 4.0, new Rotation2d()); // Blue hub
     public static Pose2d HUB1_POSE = new Pose2d(12.0, 4.0, new Rotation2d()); // Red hub
+
+    public static final boolean HUB2_INVERT_FACING = true;
   }
 
   public static class DriveConstants {

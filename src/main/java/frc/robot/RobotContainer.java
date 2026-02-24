@@ -178,7 +178,7 @@ public class RobotContainer {
 
     controller
         .rightBumper()
-        .whileTrue(DriveCommands.driveToHub(drive, 2, () -> controller.getLeftX()));
+        .whileTrue(DriveCommands.driveToHub(drive, () -> controller.getLeftX()));
   }
 
   /**
