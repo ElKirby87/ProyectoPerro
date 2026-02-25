@@ -351,17 +351,27 @@ public class DriveCommands {
 
               // Radial control: PID sobre la magnitud de la distancia
               // PID.calculate(measurement, setpoint) => (set - meas) * kP ...
-              double rawRadialOutput = radialPID.calculate(dist, desiredDistance);
-              // Queremos velocidad positiva hacia el hub cuando dist > desired
-              double radialSpeed =
-                  MathUtil.clamp(
-                      -rawRadialOutput,
-                      -drive.getMaxLinearSpeedMetersPerSec(),
-                      drive.getMaxLinearSpeedMetersPerSec());
+              double radialError = dist - desiredDistance; // >0 => estamos lejos
+              double radialSpeed = 0.0;
+              if (Math.abs(radialError) > DriveConstants.radialToleranceMeters) {
+                // Solo ejecutar PID si estamos fuera de la tolerancia radial
+                double rawRadialOutput = radialPID.calculate(dist, desiredDistance);
+                // Convertir salida PID en velocidad (positivo => mover hacia el hub)
+                radialSpeed =
+                    MathUtil.clamp(
+                        -rawRadialOutput,
+                        -drive.getMaxLinearSpeedMetersPerSec(),
+                        drive.getMaxLinearSpeedMetersPerSec());
+              } else {
+                // Dentro de tolerancia: evitar micro-correcciones/ruido y resetear integrador
+                radialPID.reset();
+                radialSpeed = 0.0;
+              }
               Translation2d radialVelRobot = radialUnitRobot.times(radialSpeed);
               // Tangential control from driver (robot-relative)
               double tangentialInput =
-                  MathUtil.applyDeadband(tangentialSupplier.getAsDouble(), DriveConstants.DEADBAND);
+                  MathUtil.applyDeadband(
+                      -tangentialSupplier.getAsDouble(), DriveConstants.DEADBAND);
               tangentialInput = Math.copySign(tangentialInput * tangentialInput, tangentialInput);
               double tangentialSpeed = tangentialInput * drive.getMaxLinearSpeedMetersPerSec();
               Translation2d tangentialVelRobot = tangentialUnitRobot.times(tangentialSpeed);
@@ -376,7 +386,20 @@ public class DriveCommands {
               // if (isHub2 && PositionConstants.HUB2_INVERT_FACING) desiredYawRad += Math.PI;
               double desiredYawRel = desiredYawRad - drive.getGyroZero().getRadians();
               double currentYawRel = robotYaw.getRadians();
-              double omega = angleController.calculate(currentYawRel, desiredYawRel);
+              // Wrapped angular error (-pi..pi)
+              double rawAngleError =
+                  Math.atan2(
+                      Math.sin(desiredYawRel - currentYawRel),
+                      Math.cos(desiredYawRel - currentYawRel));
+              double omega = 0.0;
+              if (Math.abs(rawAngleError) > DriveConstants.angleToleranceRadians) {
+                // Only run angular PID if error exceeds tolerance
+                omega = angleController.calculate(currentYawRel, desiredYawRel);
+              } else {
+                // Inside angular tolerance: stop rotating and reset controller to avoid wind-up
+                angleController.reset(currentYawRel);
+                omega = 0.0;
+              }
 
               // Build ChassisSpeeds in robot frame directly (vx forward, vy left)
               ChassisSpeeds robotSpeeds =
