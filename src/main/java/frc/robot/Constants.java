@@ -43,6 +43,7 @@ public final class Constants {
   public static class DriveConstants {
     public static final double DEADBAND = 0.2;
     public static final double ANGLE_KP = 20.0;
+    public static final double ANGLE_KI = 20.0;
     public static final double ANGLE_KD = 0.01;
     public static final double ANGLE_MAX_VELOCITY = 8.0;
     public static final double ANGLE_MAX_ACCELERATION = 20.0;
