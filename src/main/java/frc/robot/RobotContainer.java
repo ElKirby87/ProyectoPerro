@@ -201,7 +201,7 @@ public class RobotContainer {
 
     controller.rightTrigger().whileTrue(intake.moverse());
     controller.leftTrigger().whileTrue(lowShoot.sigue());
-    controller.rightBumper().whileTrue(conveyor.rcond());
+    // controller.rightBumper().whileTrue(conveyor.rcond());
     controller
         .leftBumper()
         .whileTrue(

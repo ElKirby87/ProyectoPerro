@@ -15,7 +15,7 @@ public class Conveyor extends SubsystemBase {
   public Conveyor() {}
 
   public void reversa() {
-    motor1.set(-.1);
+    motor1.set(.1);
   }
 
   public void reposo() {
