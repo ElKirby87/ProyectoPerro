@@ -62,10 +62,6 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // NamedCommands
-    NamedCommands.registerCommand("Shooter", shooter.autoshoot());
-    NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
-    NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
-    NamedCommands.registerCommand("Intake", intake.autointake());
 
     /// :]
     switch (Constants.currentMode) {
@@ -151,6 +147,13 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    NamedCommands.registerCommand("Shooter", shooter.autoshoot());
+    NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
+    NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
+    NamedCommands.registerCommand("Intake", intake.autointake());
+    NamedCommands.registerCommand(
+        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, 2));
 
     // Configure the button bindings
     configureButtonBindings();

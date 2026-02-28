@@ -41,13 +41,13 @@ public final class Constants {
   }
 
   public static class DriveConstants {
-    public static final double DEADBAND = 0.2;
-    public static final double ANGLE_KP = 20.0;
-    public static final double ANGLE_KI = 20.0;
-    public static final double ANGLE_KD = 0.01;
-    public static final double ANGLE_MAX_VELOCITY = 8.0;
+    public static final double DEADBAND = 0.1;
+    public static final double ANGLE_KP = 50.0;
+    public static final double ANGLE_KI = 0.0;
+    public static final double ANGLE_KD = 4.0;
+    public static final double ANGLE_MAX_VELOCITY = 10.0;
     public static final double ANGLE_MAX_ACCELERATION = 20.0;
-    public static final double FF_START_DELAY = 2.0;
+    public static final double FF_START_DELAY = 0.0;
     public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
     public static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
@@ -57,6 +57,6 @@ public final class Constants {
     public static final double radialKi = 0.0;
 
     public static final double radialToleranceMeters = 0.05;
-    public static final double angleToleranceRadians = Math.toRadians(3.0);
+    public static final double angleToleranceRadians = Math.toRadians(2.0);
   }
 }

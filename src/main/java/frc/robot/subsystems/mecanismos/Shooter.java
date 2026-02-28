@@ -14,7 +14,7 @@ public class Shooter extends SubsystemBase {
   public Shooter() {}
 
   public void conduce() {
-    motor.set(.25);
+    motor.set(.30);
   }
 
   public void reposo() {

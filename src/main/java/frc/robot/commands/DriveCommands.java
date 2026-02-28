@@ -425,6 +425,144 @@ public class DriveCommands {
             });
   }
 
+  public static Command driveToHubWithTimeout(Drive drive, double seconds) {
+
+    final double desiredDistance = PositionConstants.desiredDistanceFromHub;
+
+    PIDController radialPID =
+        new PIDController(
+            DriveConstants.radialKp,
+            DriveConstants.radialKi,
+            DriveConstants.radialKd); // tunear en sim/real
+
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
+            DriveConstants.ANGLE_KP,
+            0.0,
+            DriveConstants.ANGLE_KD,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.ANGLE_MAX_VELOCITY, DriveConstants.ANGLE_MAX_ACCELERATION));
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+
+    return Commands.run(
+            () -> {
+              // Selecciona el hub según la alliance (solo selección de pose)
+              Pose2d hubPose;
+              boolean isHub2;
+              if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                hubPose = PositionConstants.HUB2_POSE;
+                isHub2 = true;
+              } else if (DriverStation.getAlliance().get() == Alliance.Red) {
+                hubPose = PositionConstants.HUB1_POSE;
+                isHub2 = false;
+              } else {
+                hubPose = PositionConstants.HUB1_POSE;
+                isHub2 = false;
+              }
+
+              // Lectura de pose/gyro
+              Pose2d robotPose = drive.getPose();
+              Rotation2d robotYaw = drive.getGyroRelativeRotationRaw(); // RAW gyro frame
+              // Vector desde robot hasta hub (campo)
+              Translation2d vecField = hubPose.getTranslation().minus(robotPose.getTranslation());
+              double dist = vecField.getNorm();
+              if (dist < 1e-6) {
+                drive.runVelocity(new ChassisSpeeds(0, 0, 0));
+                return;
+              }
+
+              // Transformar vector al marco del robot (robot-relative)
+              Translation2d vecRobot =
+                  vecField.rotateBy(robotYaw.unaryMinus()); // ahora en robot frame
+
+              // Unidad radial en robot frame apuntando hacia el hub
+              Translation2d radialUnitRobot =
+                  new Translation2d(vecRobot.getX() / dist, vecRobot.getY() / dist);
+              // Tangencial unitario en robot frame
+              Translation2d tangentialUnitRobot;
+              if (isHub2) {
+                tangentialUnitRobot =
+                    new Translation2d(radialUnitRobot.getY(), -radialUnitRobot.getX());
+              } else {
+                tangentialUnitRobot =
+                    new Translation2d(-radialUnitRobot.getY(), radialUnitRobot.getX());
+              }
+
+              // Radial control: PID sobre la magnitud de la distancia
+              // PID.calculate(measurement, setpoint) => (set - meas) * kP ...
+              double radialError = dist - desiredDistance; // >0 => estamos lejos
+              double radialSpeed = 0.0;
+              if (Math.abs(radialError) > DriveConstants.radialToleranceMeters) {
+                // Solo ejecutar PID si estamos fuera de la tolerancia radial
+                double rawRadialOutput = radialPID.calculate(dist, desiredDistance);
+                // Convertir salida PID en velocidad (positivo => mover hacia el hub)
+                radialSpeed =
+                    MathUtil.clamp(
+                        -rawRadialOutput,
+                        -drive.getMaxLinearSpeedMetersPerSec(),
+                        drive.getMaxLinearSpeedMetersPerSec());
+              } else {
+                // Dentro de tolerancia: evitar micro-correcciones/ruido y resetear integrador
+                radialPID.reset();
+                radialSpeed = 0.0;
+              }
+              Translation2d radialVelRobot = radialUnitRobot.times(radialSpeed);
+              // Tangential control from driver (robot-relative)
+              double tangentialInput = MathUtil.applyDeadband(-0, DriveConstants.DEADBAND);
+              tangentialInput = Math.copySign(tangentialInput * tangentialInput, tangentialInput);
+              double tangentialSpeed = tangentialInput * drive.getMaxLinearSpeedMetersPerSec();
+              Translation2d tangentialVelRobot = tangentialUnitRobot.times(tangentialSpeed);
+
+              // Sum velocities in robot frame
+              Translation2d linearRobot = radialVelRobot.plus(tangentialVelRobot);
+
+              // Angular control: face the hub (compute desired yaw in field then convert to gyro
+              // frame)
+              double desiredYawRad =
+                  Math.atan2(hubPose.getY() - robotPose.getY(), hubPose.getX() - robotPose.getX());
+              // if (isHub2 && PositionConstants.HUB2_INVERT_FACING) desiredYawRad += Math.PI;
+              double desiredYawRel = desiredYawRad - drive.getGyroZero().getRadians();
+              double currentYawRel = robotYaw.getRadians();
+              // Wrapped angular error (-pi..pi)
+              double rawAngleError =
+                  Math.atan2(
+                      Math.sin(desiredYawRel - currentYawRel),
+                      Math.cos(desiredYawRel - currentYawRel));
+              double omega = 0.0;
+              if (Math.abs(rawAngleError) > DriveConstants.angleToleranceRadians) {
+                // Only run angular PID if error exceeds tolerance
+                omega = angleController.calculate(currentYawRel, desiredYawRel);
+              } else {
+                // Inside angular tolerance: stop rotating and reset controller to avoid wind-up
+                angleController.reset(currentYawRel);
+                omega = 0.0;
+              }
+
+              // Build ChassisSpeeds in robot frame directly (vx forward, vy left)
+              ChassisSpeeds robotSpeeds =
+                  new ChassisSpeeds(linearRobot.getX(), linearRobot.getY(), omega);
+              /*
+              if (isHub2) {
+                robotSpeeds =
+                    new ChassisSpeeds(
+                        -robotSpeeds.vxMetersPerSecond,
+                        -robotSpeeds.vyMetersPerSecond,
+                        robotSpeeds.omegaRadiansPerSecond);
+              }
+                        */
+
+              // Send robot-relative speeds directly
+              drive.runVelocity(robotSpeeds);
+            },
+            drive)
+        .beforeStarting(
+            () -> {
+              radialPID.reset();
+              angleController.reset(drive.getGyroRelativeRotationRaw().getRadians());
+            })
+        .withTimeout(seconds);
+  }
+
   /** Conveniencia: elegir hub por índice 1 o 2 (usa HUB1_POSE/HUB2_POSE). */
   /*
     public static Command driveToHub(Drive drive, int hubIndex, DoubleSupplier tangentialSupplier) {
