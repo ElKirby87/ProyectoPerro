@@ -371,7 +371,8 @@ public class DriveCommands {
               // Tangential control from driver (robot-relative)
               double tangentialInput =
                   MathUtil.applyDeadband(
-                      -tangentialSupplier.getAsDouble(), DriveConstants.DEADBAND);
+                      -tangentialSupplier.getAsDouble() * DriveConstants.tangencialSupplierPercent,
+                      DriveConstants.DEADBAND);
               tangentialInput = Math.copySign(tangentialInput * tangentialInput, tangentialInput);
               double tangentialSpeed = tangentialInput * drive.getMaxLinearSpeedMetersPerSec();
               Translation2d tangentialVelRobot = tangentialUnitRobot.times(tangentialSpeed);

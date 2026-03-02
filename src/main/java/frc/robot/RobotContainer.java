@@ -14,12 +14,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShootCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -151,9 +149,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shooter", shooter.autoshoot());
     NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
     NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
-    NamedCommands.registerCommand("Intake", intake.autointake());
+
+    NamedCommands.registerCommand("Intake", intake.autointake(1.0));
     NamedCommands.registerCommand(
-        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, 2));
+        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, .5));
+    NamedCommands.registerCommand("Disparar", ShootCommands.shoot(shooter, conveyor, lowShoot, 5));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -204,15 +204,17 @@ public class RobotContainer {
 
     controller.rightTrigger().whileTrue(intake.moverse());
     controller.leftTrigger().whileTrue(lowShoot.sigue());
+    controller.leftBumper().whileTrue(ShootCommands.shoot(shooter, conveyor, lowShoot));
+
     // controller.rightBumper().whileTrue(conveyor.rcond());
-    controller
-        .leftBumper()
-        .whileTrue(
-            new ParallelCommandGroup(
-                shooter.moverse(),
-                new SequentialCommandGroup(
-                    new WaitCommand(1.5),
-                    new ParallelCommandGroup(conveyor.rcond(), lowShoot.sigue()))));
+    /*controller
+    .leftBumper()
+    .whileTrue(
+        new ParallelCommandGroup(
+            shooter.moverse(),
+            new SequentialCommandGroup(
+                new WaitCommand(1.5),
+                new ParallelCommandGroup(conveyor.rcond(), lowShoot.sigue()))));*/
   }
 
   /**

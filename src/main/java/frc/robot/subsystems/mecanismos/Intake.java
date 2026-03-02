@@ -22,7 +22,7 @@ public class Intake extends SubsystemBase {
     motor.set(0);
   }
 
-  public Command autointake() {
+  public Command autointake(double seconds) {
     return run(() -> {
           conduce();
         })
@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
             () -> {
               reposo();
             })
-        .withTimeout(5);
+        .withTimeout(seconds);
   }
 
   public Command moverse() {
