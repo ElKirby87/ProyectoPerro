@@ -369,10 +369,20 @@ public class DriveCommands {
               }
               Translation2d radialVelRobot = radialUnitRobot.times(radialSpeed);
               // Tangential control from driver (robot-relative)
-              double tangentialInput =
-                  MathUtil.applyDeadband(
-                      -tangentialSupplier.getAsDouble() * DriveConstants.tangencialSupplierPercent,
-                      DriveConstants.DEADBAND);
+              double tangentialInput;
+
+              if (isHub2) {
+                tangentialInput =
+                    MathUtil.applyDeadband(
+                        tangentialSupplier.getAsDouble() * DriveConstants.tangencialSupplierPercent,
+                        DriveConstants.DEADBAND);
+              } else {
+                tangentialInput =
+                    MathUtil.applyDeadband(
+                        -tangentialSupplier.getAsDouble()
+                            * DriveConstants.tangencialSupplierPercent,
+                        DriveConstants.DEADBAND);
+              }
               tangentialInput = Math.copySign(tangentialInput * tangentialInput, tangentialInput);
               double tangentialSpeed = tangentialInput * drive.getMaxLinearSpeedMetersPerSec();
               Translation2d tangentialVelRobot = tangentialUnitRobot.times(tangentialSpeed);
