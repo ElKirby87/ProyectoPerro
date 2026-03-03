@@ -42,9 +42,9 @@ public final class Constants {
 
   public static class DriveConstants {
     public static final double DEADBAND = 0.2;
-    public static final double ANGLE_KP = 50.0;
+    public static final double ANGLE_KP = 20;
     public static final double ANGLE_KI = 0.0;
-    public static final double ANGLE_KD = 15.5;
+    public static final double ANGLE_KD = 4.0;
     public static final double ANGLE_MAX_VELOCITY = 10.0;
     public static final double ANGLE_MAX_ACCELERATION = 20.0;
     public static final double FF_START_DELAY = 0.0;
@@ -59,6 +59,6 @@ public final class Constants {
     public static final double radialToleranceMeters = 0.05;
     public static final double angleToleranceRadians = Math.toRadians(3.0);
 
-    public static final double tangencialSupplierPercent = 0.5;
+    public static final double tangencialSupplierPercent = 0.8;
   }
 }

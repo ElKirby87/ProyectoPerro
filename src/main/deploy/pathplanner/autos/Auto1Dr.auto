@@ -11,15 +11,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Posicionarse a hub"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Disparar"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Posicionarse a hub"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Disparar"
+                }
+              }
+            ]
           }
         },
         {
@@ -41,15 +48,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Posicionarse a hub"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Posicionarse a hub"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Disparar"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Disparar"
+            "pathName": "Ir a colgarse(1Izq)"
           }
         }
       ]

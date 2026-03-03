@@ -11,15 +11,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Posicionarse a hub"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Disparar"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Posicionarse a hub"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Disparar"
+                }
+              }
+            ]
           }
         },
         {
@@ -29,19 +36,37 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "RecogerCuadroIz"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Posicionarse1Iz2"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "RecogerCuadroIz"
+                  "name": "Posicionarse a hub"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Disparar"
                 }
               }
             ]
@@ -50,19 +75,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Posicionarse2Iz"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Posicionarse a hub"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Disparar"
+            "pathName": "Ir a colgarse(1Izq)"
           }
         }
       ]

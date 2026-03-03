@@ -127,6 +127,15 @@ public class RobotContainer {
         break;
     }
 
+    NamedCommands.registerCommand("Shooter", shooter.autoshoot());
+    NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
+    NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
+
+    NamedCommands.registerCommand("Intake", intake.autointake(1.0));
+    NamedCommands.registerCommand(
+        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, 2.15));
+    NamedCommands.registerCommand("Disparar", ShootCommands.shoot(shooter, conveyor, lowShoot, 7));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -145,15 +154,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    NamedCommands.registerCommand("Shooter", shooter.autoshoot());
-    NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
-    NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
-
-    NamedCommands.registerCommand("Intake", intake.autointake(1.0));
-    NamedCommands.registerCommand(
-        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, .5));
-    NamedCommands.registerCommand("Disparar", ShootCommands.shoot(shooter, conveyor, lowShoot, 5));
 
     // Configure the button bindings
     configureButtonBindings();
