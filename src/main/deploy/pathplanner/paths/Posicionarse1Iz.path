@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 2.0,
-        "y": 7.0
+        "y": 6.486875891583452
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.266462196861626,
-        "y": 6.046961483594864
+        "x": 2.0,
+        "y": 5.624373714971622
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.8,
+        "x": 2.0,
         "y": 5.5
       },
       "prevControl": {
-        "x": 2.308330955777461,
-        "y": 6.185748930099856
+        "x": 2.0,
+        "y": 6.243044107956214
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,13 +41,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -35.36246188706911
+    "velocity": 0.3,
+    "rotation": -35.362
   },
   "reversed": false,
   "folder": "Auto1Iz",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.3,
     "rotation": 0.0
   },
   "useDefaultConstraints": true

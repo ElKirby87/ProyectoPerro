@@ -571,8 +571,7 @@ public class DriveCommands {
               radialPID.reset();
               angleController.reset(drive.getGyroRelativeRotationRaw().getRadians());
             })
-        .withTimeout(seconds)
-        .finallyDo(() -> drive.stop());
+        .withTimeout(seconds);
   }
 
   /** Conveniencia: elegir hub por índice 1 o 2 (usa HUB1_POSE/HUB2_POSE). */

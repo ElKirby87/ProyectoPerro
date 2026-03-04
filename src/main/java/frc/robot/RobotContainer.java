@@ -131,10 +131,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
     NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
 
-    NamedCommands.registerCommand("Intake", intake.autointake(1.0));
+    NamedCommands.registerCommand("Intake", intake.autointake(2.0));
     NamedCommands.registerCommand(
-        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, 2.15));
-    NamedCommands.registerCommand("Disparar", ShootCommands.shoot(shooter, conveyor, lowShoot, 7));
+        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, 2.25));
+    NamedCommands.registerCommand(
+        "Disparar", ShootCommands.shoot(shooter, conveyor, lowShoot, intake, 7));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -204,7 +205,7 @@ public class RobotContainer {
 
     controller.rightTrigger().whileTrue(intake.moverse());
     controller.leftTrigger().whileTrue(lowShoot.sigue());
-    controller.leftBumper().whileTrue(ShootCommands.shoot(shooter, conveyor, lowShoot));
+    controller.leftBumper().whileTrue(ShootCommands.shoot(shooter, conveyor, lowShoot, intake));
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
     /*controller

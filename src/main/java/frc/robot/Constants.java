@@ -42,23 +42,47 @@ public final class Constants {
 
   public static class DriveConstants {
     public static final double DEADBAND = 0.2;
-    public static final double ANGLE_KP = 25;
+    public static final double ANGLE_KP = 8.5;
     public static final double ANGLE_KI = 0.0;
-    public static final double ANGLE_KD = 8.0;
-    public static final double ANGLE_MAX_VELOCITY = 10.0;
+    public static final double ANGLE_KD = 0.02;
+    public static final double ANGLE_MAX_VELOCITY = 8.0;
     public static final double ANGLE_MAX_ACCELERATION = 20.0;
     public static final double FF_START_DELAY = 0.0;
     public static final double FF_RAMP_RATE = 0.1; // Volts/Sec
     public static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
-    public static final double radialKp = 5.0;
-    public static final double radialKd = 0.01;
+    public static final double radialKp = 8.0;
+    public static final double radialKd = 0.02;
     public static final double radialKi = 0.0;
 
     public static final double radialToleranceMeters = 0.05;
-    public static final double angleToleranceRadians = Math.toRadians(3.0);
+    public static final double angleToleranceRadians = Math.toRadians(5.0);
 
     public static final double tangencialSupplierPercent = 0.8;
+  }
+
+  public static class IntakeConstants {
+    public static final int kIntakeMotorId = 25;
+    public static final double intakeSpeed = 0.5;
+  }
+
+  public static class ShooterConstants {
+    public static final int kShooterMotorId = 20;
+    public static final double shooterSpeed = 0.30;
+  }
+
+  public static class LowShooterConstants {
+    public static final int kLowShooterMotorId = 19;
+    public static final double lowShooterSpeed = 0.5;
+  }
+
+  public static class ConveyorConstants {
+    public static final int kConveyorMotorId = 18;
+    public static final double conveyorSpeed = 0.15;
+  }
+
+  public static class CommandsConstants {
+    public static final double shootWaitCommandSeconds = 0.0;
   }
 }

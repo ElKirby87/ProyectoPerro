@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
 import frc.robot.subsystems.mecanismos.Conveyor;
+import frc.robot.subsystems.mecanismos.Intake;
 import frc.robot.subsystems.mecanismos.LowShoot;
 import frc.robot.subsystems.mecanismos.Shooter;
 
@@ -17,20 +19,22 @@ import frc.robot.subsystems.mecanismos.Shooter;
 public class ShootCommands {
   private ShootCommands() {}
 
-  public static Command shoot(Shooter shooter, Conveyor conveyor, LowShoot lowShoot) {
+  public static Command shoot(
+      Shooter shooter, Conveyor conveyor, LowShoot lowShoot, Intake intake) {
     return Commands.parallel(
         shooter.moverse(),
         new SequentialCommandGroup(
-            new WaitCommand(0.75), new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond())));
+            new WaitCommand(Constants.CommandsConstants.shootWaitCommandSeconds),
+            new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse())));
   }
 
   public static Command shoot(
-      Shooter shooter, Conveyor conveyor, LowShoot lowShoot, double timeout) {
+      Shooter shooter, Conveyor conveyor, LowShoot lowShoot, Intake intake, double timeout) {
     return Commands.parallel(
             shooter.moverse(),
             new SequentialCommandGroup(
-                new WaitCommand(0.75),
-                new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond())))
+                new WaitCommand(Constants.CommandsConstants.shootWaitCommandSeconds),
+                new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse())))
         .withTimeout(timeout);
   }
 }

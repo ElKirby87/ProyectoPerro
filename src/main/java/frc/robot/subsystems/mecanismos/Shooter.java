@@ -7,14 +7,15 @@ package frc.robot.subsystems.mecanismos;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-  TalonFX motor = new TalonFX(20);
+  TalonFX motor = new TalonFX(Constants.ShooterConstants.kShooterMotorId);
 
   public Shooter() {}
 
   public void conduce() {
-    motor.set(.30);
+    motor.set(Constants.ShooterConstants.shooterSpeed);
   }
 
   public void reposo() {

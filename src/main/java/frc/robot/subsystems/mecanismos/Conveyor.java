@@ -9,13 +9,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Conveyor extends SubsystemBase {
-  TalonFX motor1 = new TalonFX(18);
+  TalonFX motor1 = new TalonFX(frc.robot.Constants.ConveyorConstants.kConveyorMotorId);
 
   /** Creates a new Conveyor. */
   public Conveyor() {}
 
   public void reversa() {
-    motor1.set(.1);
+    motor1.set(frc.robot.Constants.ConveyorConstants.conveyorSpeed);
   }
 
   public void reposo() {
