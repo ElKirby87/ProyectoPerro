@@ -208,27 +208,14 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    /*controller
-    .rightBumper()
-    .whileTrue(DriveCommands.driveToHub(drive, () -> controller.getLeftX()));
-    */
-
-    /*controller
-    .rightBumper()
-    .whileTrue(
-        new ParallelCommandGroup(
-            DriveCommands.AimToHub(
-                drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()),
-            ShootCommands.Smartshoot(shooter, conveyor, lowShoot, intake)));
-            */
     controller
-        .rightBumper()
+        .leftBumper()
         .whileTrue(
-            DriveCommands.AimToHub(
-                drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()));
+            DriveCommands.driveToHub(
+                drive, () -> controller.getLeftY(), () -> controller.getLeftX()));
     controller.rightTrigger().whileTrue(intake.moverse(true));
     controller.leftTrigger().whileTrue(intake.moverse(false));
-    controller.leftBumper().whileTrue(ShootCommands.shoot(shooter, conveyor, lowShoot, intake));
+    controller.rightBumper().whileTrue(ShootCommands.shoot(shooter, conveyor, lowShoot, intake));
     controller.leftStick().onTrue(DriveCommands.ChangeFollowing());
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
