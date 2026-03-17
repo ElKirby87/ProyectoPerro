@@ -16,7 +16,7 @@ public class LowShoot extends SubsystemBase {
   public LowShoot() {}
 
   public void conduce() {
-    motor3.set(Constants.LowShooterConstants.lowShooterSpeed);
+    motor3.set(-Constants.LowShooterConstants.lowShooterSpeed);
   }
 
   public void reposo() {

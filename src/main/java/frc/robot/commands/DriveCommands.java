@@ -21,11 +21,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PositionConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.mecanismos.Shooter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
@@ -34,6 +37,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class DriveCommands {
+  public static Boolean isHubFollowing = true;
 
   private DriveCommands() {}
 
@@ -374,13 +378,12 @@ public class DriveCommands {
               if (isHub2) {
                 tangentialInput =
                     MathUtil.applyDeadband(
-                        tangentialSupplier.getAsDouble() * DriveConstants.tangencialSupplierPercent,
+                        tangentialSupplier.getAsDouble() * DriveConstants.supplierPercent,
                         DriveConstants.DEADBAND);
               } else {
                 tangentialInput =
                     MathUtil.applyDeadband(
-                        -tangentialSupplier.getAsDouble()
-                            * DriveConstants.tangencialSupplierPercent,
+                        -tangentialSupplier.getAsDouble() * DriveConstants.supplierPercent,
                         DriveConstants.DEADBAND);
               }
               tangentialInput = Math.copySign(tangentialInput * tangentialInput, tangentialInput);
@@ -398,19 +401,13 @@ public class DriveCommands {
               double desiredYawRel = desiredYawRad - drive.getGyroZero().getRadians();
               double currentYawRel = robotYaw.getRadians();
               // Wrapped angular error (-pi..pi)
-              double rawAngleError =
-                  Math.atan2(
-                      Math.sin(desiredYawRel - currentYawRel),
-                      Math.cos(desiredYawRel - currentYawRel));
-              double omega = 0.0;
-              if (Math.abs(rawAngleError) > DriveConstants.angleToleranceRadians) {
-                // Only run angular PID if error exceeds tolerance
-                omega = angleController.calculate(currentYawRel, desiredYawRel);
-              } else {
-                // Inside angular tolerance: stop rotating and reset controller to avoid wind-up
-                angleController.reset(currentYawRel);
-                omega = 0.0;
-              }
+
+              double omega =
+                  angleController.calculate(
+                      currentYawRel,
+                      desiredYawRel - (tangentialInput * DriveConstants.angleHeadingRadians));
+
+              omega = MathUtil.applyDeadband(omega, DriveConstants.angleDEADBAND);
 
               // Build ChassisSpeeds in robot frame directly (vx forward, vy left)
               ChassisSpeeds robotSpeeds =
@@ -535,19 +532,12 @@ public class DriveCommands {
               double desiredYawRel = desiredYawRad - drive.getGyroZero().getRadians();
               double currentYawRel = robotYaw.getRadians();
               // Wrapped angular error (-pi..pi)
-              double rawAngleError =
-                  Math.atan2(
-                      Math.sin(desiredYawRel - currentYawRel),
-                      Math.cos(desiredYawRel - currentYawRel));
-              double omega = 0.0;
-              if (Math.abs(rawAngleError) > DriveConstants.angleToleranceRadians) {
-                // Only run angular PID if error exceeds tolerance
-                omega = angleController.calculate(currentYawRel, desiredYawRel);
-              } else {
-                // Inside angular tolerance: stop rotating and reset controller to avoid wind-up
-                angleController.reset(currentYawRel);
-                omega = 0.0;
-              }
+              double omega =
+                  angleController.calculate(
+                      currentYawRel,
+                      desiredYawRel - (tangentialInput * DriveConstants.angleHeadingRadians));
+
+              omega = MathUtil.applyDeadband(omega, DriveConstants.angleDEADBAND);
 
               // Build ChassisSpeeds in robot frame directly (vx forward, vy left)
               ChassisSpeeds robotSpeeds =
@@ -572,6 +562,106 @@ public class DriveCommands {
               angleController.reset(drive.getGyroRelativeRotationRaw().getRadians());
             })
         .withTimeout(seconds);
+  }
+
+  public static Command AimToHub(
+      Drive drive, Shooter shooter, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
+            DriveConstants.ANGLE_KP,
+            0.0,
+            DriveConstants.ANGLE_KD,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.ANGLE_MAX_VELOCITY, DriveConstants.ANGLE_MAX_ACCELERATION));
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+
+    return Commands.run(
+            () -> {
+              // Selecciona el hub según la alliance (solo selección de pose)
+              Pose2d robotPose = drive.getPose();
+              Pose2d desiredPose;
+              if (DriverStation.getAlliance().get() == Alliance.Blue && isHubFollowing) {
+                desiredPose = PositionConstants.HUB2_POSE;
+              } else if (DriverStation.getAlliance().get() == Alliance.Red && isHubFollowing) {
+                desiredPose = PositionConstants.HUB1_POSE;
+              } else if (DriverStation.getAlliance().get() == Alliance.Blue && !isHubFollowing) {
+                if (Math.abs(robotPose.getY() - PositionConstants.BLUEAPOSITION.getY())
+                    < Math.abs(robotPose.getY() - PositionConstants.BLUEBPOSITION.getY())) {
+                  desiredPose = PositionConstants.BLUEAPOSITION;
+                } else {
+                  desiredPose = PositionConstants.BLUEBPOSITION;
+                }
+              } else if (DriverStation.getAlliance().get() == Alliance.Red && !isHubFollowing) {
+                if (Math.abs(robotPose.getY() - PositionConstants.BLUEAPOSITION.getY())
+                    < Math.abs(robotPose.getY() - PositionConstants.BLUEBPOSITION.getY())) {
+                  desiredPose = PositionConstants.REDBPOSITION;
+                } else {
+                  desiredPose = PositionConstants.REDAPOSITION;
+                }
+              } else {
+                desiredPose = PositionConstants.HUB1_POSE;
+              }
+
+              // Lectura de pose/gyro
+
+              Rotation2d robotYaw = drive.getGyroRelativeRotationRaw(); // RAW gyro frame
+              // Vector desde robot hasta hub (campo)
+              Translation2d vecField =
+                  desiredPose.getTranslation().minus(robotPose.getTranslation());
+              double dist = vecField.getNorm();
+
+              shooter.SetMeters(dist);
+
+              double desiredYawRad =
+                  Math.atan2(
+                      desiredPose.getY() - robotPose.getY(), desiredPose.getX() - robotPose.getX());
+              // if (isHub2 && PositionConstants.HUB2_INVERT_FACING) desiredYawRad += Math.PI;
+              double desiredYawRel = desiredYawRad - drive.getGyroZero().getRadians();
+              double currentYawRel = robotYaw.getRadians();
+              // Wrapped angular error (-pi..pi)
+
+              double omega = angleController.calculate(currentYawRel, desiredYawRel);
+
+              omega = MathUtil.applyDeadband(omega, DriveConstants.angleDEADBAND);
+
+              Translation2d linearVelocity =
+                  getLinearVelocityFromJoysticks(
+                      xSupplier.getAsDouble() * Constants.DriveConstants.supplierPercent,
+                      ySupplier.getAsDouble() * Constants.DriveConstants.supplierPercent);
+
+              // Square rotation value for more precise control
+              omega = Math.copySign(omega * omega, omega);
+
+              // Convert to field relative speeds & send command
+              ChassisSpeeds speeds =
+                  new ChassisSpeeds(
+                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                      omega * drive.getMaxAngularSpeedRadPerSec());
+              boolean isFlipped =
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Blue;
+              // Use gyro-relative rotation raw (ignores invertHeading) so driver controls stay
+              // consistent
+              Rotation2d rawBase = drive.getGyroRelativeRotationRaw();
+              Rotation2d baseRot = isFlipped ? rawBase.plus(new Rotation2d(Math.PI)) : rawBase;
+              drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, baseRot));
+            },
+            drive,
+            shooter)
+        .beforeStarting(
+            () -> {
+              angleController.reset(drive.getGyroRelativeRotationRaw().getRadians());
+            });
+  }
+
+  public static Command ChangeFollowing() {
+    return Commands.runOnce(
+        () -> {
+          isHubFollowing = !isHubFollowing;
+          SmartDashboard.putBoolean("Is Following Hub", isHubFollowing);
+        });
   }
 
   /** Conveniencia: elegir hub por índice 1 o 2 (usa HUB1_POSE/HUB2_POSE). */

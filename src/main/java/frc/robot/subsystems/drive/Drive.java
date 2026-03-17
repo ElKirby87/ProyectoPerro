@@ -119,6 +119,14 @@ public class Drive extends SubsystemBase {
   public boolean isInvertHeading() {
     return this.invertHeading;
   }
+  /*
+    private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
+        new SwerveRequest.SysIdSwerveTranslation();
+    private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization =
+        new SwerveRequest.SysIdSwerveSteerGains();
+    private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
+        new SwerveRequest.SysIdSwerveRotation();
+  */
 
   public Drive(
       GyroIO gyroIO,
@@ -145,7 +153,14 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(
+                Constants.DriveConstants.kTranslationKp,
+                Constants.DriveConstants.kTranslationKi,
+                Constants.DriveConstants.kTranslationKd),
+            new PIDConstants(
+                Constants.DriveConstants.kRotationKp,
+                Constants.DriveConstants.kRotationKi,
+                Constants.DriveConstants.kRotationKd)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -164,9 +179,9 @@ public class Drive extends SubsystemBase {
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,
+                Volts.of(4),
                 null,
-                null,
-                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput("SysIdTranslation_State", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }

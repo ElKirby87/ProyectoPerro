@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ShootCommands;
 import frc.robot.generated.TunerConstants;
@@ -56,6 +57,8 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  // public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -131,7 +134,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
     NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
 
-    NamedCommands.registerCommand("Intake", intake.autointake(2.0));
+    NamedCommands.registerCommand("Intake", intake.autointake(2.0, true));
     NamedCommands.registerCommand(
         "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, 2.25));
     NamedCommands.registerCommand(
@@ -167,6 +170,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    // Run SysId routines when holding back/start and X/Y.
+    // Note that each routine should be run exactly once in a single log.
+    controller.back().and(controller.y()).whileTrue(drive.sysIdDynamic(Direction.kForward));
+    controller.back().and(controller.x()).whileTrue(drive.sysIdDynamic(Direction.kReverse));
+    controller.start().and(controller.y()).whileTrue(drive.sysIdQuasistatic(Direction.kForward));
+    controller.start().and(controller.x()).whileTrue(drive.sysIdQuasistatic(Direction.kReverse));
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -199,13 +208,28 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    /*controller
+    .rightBumper()
+    .whileTrue(DriveCommands.driveToHub(drive, () -> controller.getLeftX()));
+    */
+
+    /*controller
+    .rightBumper()
+    .whileTrue(
+        new ParallelCommandGroup(
+            DriveCommands.AimToHub(
+                drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()),
+            ShootCommands.Smartshoot(shooter, conveyor, lowShoot, intake)));
+            */
     controller
         .rightBumper()
-        .whileTrue(DriveCommands.driveToHub(drive, () -> controller.getLeftX()));
-
-    controller.rightTrigger().whileTrue(intake.moverse());
-    controller.leftTrigger().whileTrue(lowShoot.sigue());
+        .whileTrue(
+            DriveCommands.AimToHub(
+                drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()));
+    controller.rightTrigger().whileTrue(intake.moverse(true));
+    controller.leftTrigger().whileTrue(intake.moverse(false));
     controller.leftBumper().whileTrue(ShootCommands.shoot(shooter, conveyor, lowShoot, intake));
+    controller.leftStick().onTrue(DriveCommands.ChangeFollowing());
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
     /*controller

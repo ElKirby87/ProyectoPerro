@@ -37,12 +37,17 @@ public final class Constants {
     public static Pose2d HUB2_POSE = new Pose2d(4.65, 4.0, new Rotation2d()); // Blue hub
     public static Pose2d HUB1_POSE = new Pose2d(12.0, 4.0, new Rotation2d()); // Red hub
 
+    public static Pose2d BLUEAPOSITION = new Pose2d(2.5, 6, new Rotation2d());
+    public static Pose2d BLUEBPOSITION = new Pose2d(2.5, 2, new Rotation2d());
+    public static Pose2d REDAPOSITION = new Pose2d(14, 2, new Rotation2d());
+    public static Pose2d REDBPOSITION = new Pose2d(14, 6, new Rotation2d());
+
     public static final boolean HUB2_INVERT_FACING = true;
   }
 
   public static class DriveConstants {
     public static final double DEADBAND = 0.2;
-    public static final double ANGLE_KP = 8.5;
+    public static final double ANGLE_KP = 9.0;
     public static final double ANGLE_KI = 0.0;
     public static final double ANGLE_KD = 0.02;
     public static final double ANGLE_MAX_VELOCITY = 8.0;
@@ -57,19 +62,30 @@ public final class Constants {
     public static final double radialKi = 0.0;
 
     public static final double radialToleranceMeters = 0.05;
-    public static final double angleToleranceRadians = Math.toRadians(5.0);
+    public static final double angleToleranceRadians = Math.toRadians(0.0);
+    public static final double angleDEADBAND = 0.1;
+    public static final double angleHeadingRadians = Math.toRadians(45.0);
 
-    public static final double tangencialSupplierPercent = 0.8;
+    public static final double supplierPercent = 0.6;
+
+    public static final double kTranslationKp = 0.5;
+    public static final double kTranslationKi = 0.0;
+    public static final double kTranslationKd = 0.0;
+
+    public static final double kRotationKp = 0.5;
+    public static final double kRotationKi = 0.0;
+    public static final double kRotationKd = 0.0;
   }
 
   public static class IntakeConstants {
-    public static final int kIntakeMotorId = 25;
-    public static final double intakeSpeed = 0.5;
+    public static final int kIntakeMotorId = 20;
+    public static final double intakeSpeed = 0.3;
   }
 
   public static class ShooterConstants {
-    public static final int kShooterMotorId = 20;
+    public static final int kShooterMotorId = 21;
     public static final double shooterSpeed = 0.30;
+    public static final double speedPerMeter = 0.10;
   }
 
   public static class LowShooterConstants {
@@ -79,10 +95,10 @@ public final class Constants {
 
   public static class ConveyorConstants {
     public static final int kConveyorMotorId = 18;
-    public static final double conveyorSpeed = 0.15;
+    public static final double conveyorSpeed = 0.2;
   }
 
   public static class CommandsConstants {
-    public static final double shootWaitCommandSeconds = 0.0;
+    public static final double shootWaitCommandSeconds = 0.75;
   }
 }

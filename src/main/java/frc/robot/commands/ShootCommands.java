@@ -25,7 +25,16 @@ public class ShootCommands {
         shooter.moverse(),
         new SequentialCommandGroup(
             new WaitCommand(Constants.CommandsConstants.shootWaitCommandSeconds),
-            new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse())));
+            new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse(true))));
+  }
+
+  public static Command Smartshoot(
+      Shooter shooter, Conveyor conveyor, LowShoot lowShoot, Intake intake) {
+    return Commands.parallel(
+        shooter.Activar(),
+        new SequentialCommandGroup(
+            new WaitCommand(Constants.CommandsConstants.shootWaitCommandSeconds),
+            new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse(true))));
   }
 
   public static Command shoot(
@@ -34,7 +43,7 @@ public class ShootCommands {
             shooter.moverse(),
             new SequentialCommandGroup(
                 new WaitCommand(Constants.CommandsConstants.shootWaitCommandSeconds),
-                new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse())))
+                new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse(true))))
         .withTimeout(timeout);
   }
 }

@@ -4,28 +4,31 @@
 
 package frc.robot.subsystems.mecanismos;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  SparkMax motor = new SparkMax(Constants.IntakeConstants.kIntakeMotorId, MotorType.kBrushed);
+  TalonFX m_motor = new TalonFX(Constants.IntakeConstants.kIntakeMotorId);
   /** Creates a new Intake. */
   public Intake() {}
 
-  public void conduce() {
-    motor.set(Constants.IntakeConstants.intakeSpeed);
+  public void conduce(Boolean isOn) {
+    if (isOn) {
+      m_motor.set(-Constants.IntakeConstants.intakeSpeed);
+    } else {
+      m_motor.set(Constants.IntakeConstants.intakeSpeed);
+    }
   }
 
   public void reposo() {
-    motor.set(0);
+    m_motor.set(0);
   }
 
-  public Command autointake(double seconds) {
+  public Command autointake(double seconds, Boolean isOn) {
     return run(() -> {
-          conduce();
+          conduce(isOn);
         })
         .handleInterrupt(
             () -> {
@@ -38,9 +41,9 @@ public class Intake extends SubsystemBase {
         .withTimeout(seconds);
   }
 
-  public Command moverse() {
+  public Command moverse(Boolean isOn) {
     return run(() -> {
-          conduce();
+          conduce(isOn);
         })
         .handleInterrupt(
             () -> {

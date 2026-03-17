@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Posicionarse1Dr"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [

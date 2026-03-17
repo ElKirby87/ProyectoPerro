@@ -12,20 +12,20 @@
         "y": 1.9179885877318137
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "end1Dr"
     },
     {
       "anchor": {
-        "x": 2.15,
+        "x": 2.0,
         "y": 3.75
       },
       "prevControl": {
-        "x": 2.124122681883024,
+        "x": 1.9741226818830242,
         "y": 2.9736804564907278
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "end3"
     }
   ],
   "rotationTargets": [],

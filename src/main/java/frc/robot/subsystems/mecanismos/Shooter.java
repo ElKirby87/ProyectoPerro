@@ -11,11 +11,20 @@ import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
   TalonFX motor = new TalonFX(Constants.ShooterConstants.kShooterMotorId);
+  double meters = 0.0;
 
   public Shooter() {}
 
   public void conduce() {
     motor.set(Constants.ShooterConstants.shooterSpeed);
+  }
+
+  public void SmartShoot() {
+    motor.set(meters * Constants.ShooterConstants.speedPerMeter);
+  }
+
+  public void SetMeters(double meters) {
+    this.meters = meters;
   }
 
   public void reposo() {
@@ -40,6 +49,20 @@ public class Shooter extends SubsystemBase {
   public Command moverse() {
     return run(() -> {
           conduce();
+        })
+        .handleInterrupt(
+            () -> {
+              reposo();
+            })
+        .finallyDo(
+            () -> {
+              reposo();
+            });
+  }
+
+  public Command Activar() {
+    return run(() -> {
+          SmartShoot();
         })
         .handleInterrupt(
             () -> {

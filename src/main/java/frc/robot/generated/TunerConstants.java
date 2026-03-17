@@ -12,6 +12,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.*;
+// import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 // import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -80,7 +81,7 @@ public class TunerConstants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(5.23);
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(8);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
@@ -142,7 +143,7 @@ public class TunerConstants {
   private static final boolean kFrontLeftSteerMotorInverted = true;
   private static final boolean kFrontLeftEncoderInverted = false;
 
-  private static final Distance kFrontLeftXPos = Inches.of(11);
+  public static final Distance kFrontLeftXPos = Inches.of(11);
   private static final Distance kFrontLeftYPos = Inches.of(11);
 
   // Front Right
@@ -230,20 +231,16 @@ public class TunerConstants {
               kInvertRightSide,
               kBackRightSteerMotorInverted,
               kBackRightEncoderInverted);
-
   /**
    * Creates a CommandSwerveDrivetrain instance. This should only be called once in your robot
    * program,.
    */
   /*
-  public static CommandSwerveDrivetrain createDrivetrain() {
-      return new CommandSwerveDrivetrain(
-          DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
-      );
-  }
-
-   */
-
+   public static CommandSwerveDrivetrain createDrivetrain() {
+     return new CommandSwerveDrivetrain(
+         DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight);
+   }
+  */
   /** Swerve Drive class utilizing CTR Electronics' Phoenix 6 API with the selected device types. */
   public static class TunerSwerveDrivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> {
     /**
