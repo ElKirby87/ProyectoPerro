@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -30,6 +29,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.mecanismos.Conveyor;
 import frc.robot.subsystems.mecanismos.Intake;
 import frc.robot.subsystems.mecanismos.LowShoot;
+import frc.robot.subsystems.mecanismos.Neumatica;
 import frc.robot.subsystems.mecanismos.Shooter;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -52,6 +52,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final LowShoot lowShoot = new LowShoot();
   private final Intake intake = new Intake();
+  private final Neumatica neumatica = new Neumatica();
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -208,7 +209,13 @@ public class RobotContainer {
                     },
                     drive)
                 .ignoringDisable(true));
-    controller.leftTrigger().whileTrue(new ParallelCommandGroup(DriveCommands.driveToHub(drive, shooter,() -> controller.getLeftY(), () -> controller.getLeftX()), shooter.Activar()));
+    /*controller
+    .leftTrigger()
+    .whileTrue(
+        new ParallelCommandGroup(
+            DriveCommands.driveToHub(
+                drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()),
+            shooter.Activar())); */
     controller
         .leftTrigger()
         .whileTrue(
@@ -218,6 +225,8 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(intake.moverse(false));
     controller.rightTrigger().whileTrue(ShootCommands.Conveyor(conveyor, lowShoot, intake));
     controller.leftStick().onTrue(DriveCommands.ChangeFollowing());
+    controller.povDown().onTrue(neumatica.SacaIntake());
+    controller.povUp().onTrue(neumatica.enableCompressor());
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
     /*controller
