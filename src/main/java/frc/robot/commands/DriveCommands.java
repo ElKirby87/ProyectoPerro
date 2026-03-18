@@ -21,6 +21,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -291,7 +292,7 @@ public class DriveCommands {
    * mientras el comando funcione.
    */
   public static Command driveToHub(
-      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+      Drive drive, Shooter shooter, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
 
     final double desiredDistance = PositionConstants.desiredDistanceFromHub;
 
@@ -351,6 +352,8 @@ public class DriveCommands {
                 drive.runVelocity(new ChassisSpeeds(0, 0, 0));
                 return;
               }
+
+              shooter.SetMeters(dist);
 
               double desiredYawRad =
                   Math.atan2(
@@ -432,7 +435,7 @@ public class DriveCommands {
                 drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(robotSpeeds, baseRot));
               }
             },
-            drive)
+            drive, shooter)
         .beforeStarting(
             () -> {
               radialPID.reset();

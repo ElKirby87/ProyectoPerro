@@ -46,4 +46,8 @@ public class ShootCommands {
                 new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse(true))))
         .withTimeout(timeout);
   }
+
+  public static Command Conveyor(Conveyor conveyor, LowShoot lowShoot, Intake intake) {
+    return new ParallelCommandGroup(lowShoot.sigue(), conveyor.rcond(), intake.moverse(true));
+  }
 }

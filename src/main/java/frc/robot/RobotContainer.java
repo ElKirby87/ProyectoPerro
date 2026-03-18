@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -207,15 +208,15 @@ public class RobotContainer {
                     },
                     drive)
                 .ignoringDisable(true));
-
+    controller.leftTrigger().whileTrue(new ParallelCommandGroup(DriveCommands.driveToHub(drive, shooter,() -> controller.getLeftY(), () -> controller.getLeftX()), shooter.Activar()));
     controller
-        .leftBumper()
+        .leftTrigger()
         .whileTrue(
             DriveCommands.driveToHub(
-                drive, () -> controller.getLeftY(), () -> controller.getLeftX()));
-    controller.rightTrigger().whileTrue(intake.moverse(true));
-    controller.leftTrigger().whileTrue(intake.moverse(false));
-    controller.rightBumper().whileTrue(ShootCommands.shoot(shooter, conveyor, lowShoot, intake));
+                drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()));
+    controller.rightBumper().whileTrue(intake.moverse(true));
+    controller.leftBumper().whileTrue(intake.moverse(false));
+    controller.rightTrigger().whileTrue(ShootCommands.Conveyor(conveyor, lowShoot, intake));
     controller.leftStick().onTrue(DriveCommands.ChangeFollowing());
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
