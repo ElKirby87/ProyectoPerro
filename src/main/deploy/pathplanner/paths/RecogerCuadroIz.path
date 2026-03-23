@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 5.5
+        "x": 1.9818116975748925,
+        "y": 5.425905848787448
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6071365048678474,
-        "y": 5.892863495132152
+        "x": 1.6583452211126959,
+        "y": 5.71055634807418
       },
       "isLocked": false,
       "linkedName": "end1"
     },
     {
       "anchor": {
-        "x": 1.0,
-        "y": 6.5
+        "x": 1.140798858773181,
+        "y": 5.904636233951498
       },
       "prevControl": {
-        "x": 1.3814713592173573,
-        "y": 6.1185286407826425
+        "x": 1.5677746077032806,
+        "y": 5.775249643366619
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Auto1Iz",
   "idealStartingState": {
     "velocity": 0.1,
-    "rotation": -35.362
+    "rotation": -32.347443499442065
   },
   "useDefaultConstraints": true
 }

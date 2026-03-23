@@ -1,0 +1,115 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.05,
+        "y": 5.4
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.2147075606276743,
+        "y": 6.150470756062767
+      },
+      "isLocked": false,
+      "linkedName": "Disparar2IzEnd"
+    },
+    {
+      "anchor": {
+        "x": 3.1851069900142646,
+        "y": 7.35
+      },
+      "prevControl": {
+        "x": 2.4605420827389435,
+        "y": 7.311184022824536
+      },
+      "nextControl": {
+        "x": 3.5212788101461725,
+        "y": 7.3680092046499235
+      },
+      "isLocked": false,
+      "linkedName": "PasarTrincheraAIzq"
+    },
+    {
+      "anchor": {
+        "x": 6.1351212553495005,
+        "y": 7.35376604850214
+      },
+      "prevControl": {
+        "x": 5.577406513824167,
+        "y": 7.35376604850214
+      },
+      "nextControl": {
+        "x": 6.820992237409049,
+        "y": 7.35376604850214
+      },
+      "isLocked": false,
+      "linkedName": "PasarTrincheraBIzq"
+    },
+    {
+      "anchor": {
+        "x": 8.011226818830243,
+        "y": 7.35
+      },
+      "prevControl": {
+        "x": 7.6229586831391565,
+        "y": 7.35
+      },
+      "nextControl": {
+        "x": 8.270027403091634,
+        "y": 7.35
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.25706134094151,
+        "y": 4.546077032810271
+      },
+      "prevControl": {
+        "x": 8.25706134094151,
+        "y": 5.3095675590403575
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Recoger2IzEnd"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8792483006797238,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.8964414234306246,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 3.2292870905587687,
+      "rotationDegrees": 90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.15,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "Auto2Iz",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -28.80590353259929
+  },
+  "useDefaultConstraints": true
+}

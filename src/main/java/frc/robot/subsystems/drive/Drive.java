@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -104,6 +105,8 @@ public class Drive extends SubsystemBase {
 
   // If true, treat the robot's forward as reversed (add 180° to gyro-relative heading)
   private boolean invertHeading = false;
+
+  private boolean isFollowing = true;
 
   /** Set whether the robot's forward is inverted (adds 180° to relative heading). */
   public void setInvertHeading(boolean invert) {
@@ -186,11 +189,16 @@ public class Drive extends SubsystemBase {
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
+  public void UpdateFollowingSatus(boolean isFollowing) {
+    this.isFollowing = isFollowing;
+  }
+
   @Override
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
+    SmartDashboard.putBoolean("Hub Following", isFollowing);
     for (var module : modules) {
       module.periodic();
     }
