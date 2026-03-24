@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inicio3I"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "dos3I"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "tres3I"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "cuatro3I"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "cinco3I"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "seis3I"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inicio3I"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

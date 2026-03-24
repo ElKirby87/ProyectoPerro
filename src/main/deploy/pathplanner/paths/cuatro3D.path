@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.140798858773181,
-        "y": 5.904636233951498
+        "x": 7.789180722891565,
+        "y": 7.422590361445783
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2640175020824602,
-        "y": 5.638936327648511
+        "x": 7.778253012048193,
+        "y": 6.154975903614457
       },
       "isLocked": false,
-      "linkedName": "end2"
+      "linkedName": "PasarTrinchera3Dr"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 3.75
+        "x": 7.789180722891565,
+        "y": 5.007566265060241
       },
       "prevControl": {
-        "x": 1.90132321452043,
-        "y": 3.979701745764848
+        "x": 7.778253012048193,
+        "y": 5.761578313253012
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "end3"
+      "linkedName": "regreso3Dr"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.05892116182572677,
+      "rotationDegrees": 89.82730280424833
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 88.66778014613008
   },
   "reversed": false,
-  "folder": "Auto1Iz",
+  "folder": "Auto3Dr",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -1.9414863909144
   },
   "useDefaultConstraints": true
 }

@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.140798858773181,
-        "y": 5.904636233951498
+        "x": 6.871253012048193,
+        "y": 0.6146265060240967
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2640175020824602,
-        "y": 5.638936327648511
+        "x": 7.909385542168675,
+        "y": 0.5818433734939765
       },
       "isLocked": false,
-      "linkedName": "end2"
+      "linkedName": "PasaTrinchera3I"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 3.75
+        "x": 7.767325301204821,
+        "y": 3.34655421686747
       },
       "prevControl": {
-        "x": 1.90132321452043,
-        "y": 3.979701745764848
+        "x": 7.789180722891565,
+        "y": 1.5434819277108447
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "end3"
+      "linkedName": "pelotas3I"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.07717842323651551,
+      "rotationDegrees": -90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,10 +47,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Auto1Iz",
+  "folder": "Auto3Iz",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

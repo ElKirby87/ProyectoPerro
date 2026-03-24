@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.140798858773181,
-        "y": 5.904636233951498
+        "x": 6.871253012048193,
+        "y": 0.6146265060240967
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2640175020824602,
-        "y": 5.638936327648511
+        "x": 5.570855421686747,
+        "y": 0.5927710843373496
       },
       "isLocked": false,
-      "linkedName": "end2"
+      "linkedName": "PasaTrinchera3I"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 3.75
+        "x": 3.7240722891566262,
+        "y": 0.6146265060240967
       },
       "prevControl": {
-        "x": 1.90132321452043,
-        "y": 3.979701745764848
+        "x": 4.685710843373494,
+        "y": 0.6036987951807224
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "end3"
+      "linkedName": "Inicio3I"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Auto1Iz",
+  "folder": "Auto3Iz",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

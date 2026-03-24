@@ -4,19 +4,31 @@
 
 package frc.robot.subsystems.mecanismos;
 
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
   TalonFX motor = new TalonFX(Constants.ShooterConstants.kShooterMotorId);
+
+  private final VoltageOut shooterVoltageRequest = new VoltageOut(0.0).withEnableFOC(true);
+  Boolean isFollowing = true;
   double meters = 0.0;
 
   public Shooter() {}
 
   public void conduce() {
-    motor.set(Constants.ShooterConstants.shooterSpeed);
+    if (isFollowing) {
+      motor.setControl(
+          shooterVoltageRequest.withOutput(Constants.ShooterConstants.shooterSpeed * 12));
+    } else {
+      motor.setControl(
+          shooterVoltageRequest.withOutput(
+              meters * (Constants.ShooterConstants.speedPerMeter * 12)));
+    }
   }
 
   public void SmartShoot() {
@@ -29,6 +41,10 @@ public class Shooter extends SubsystemBase {
 
   public void reposo() {
     motor.set(0);
+  }
+
+  public void setFollow(Boolean isFollowing) {
+    this.isFollowing = isFollowing;
   }
 
   public Command autoshoot() {
@@ -77,5 +93,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Distance", meters);
   }
 }

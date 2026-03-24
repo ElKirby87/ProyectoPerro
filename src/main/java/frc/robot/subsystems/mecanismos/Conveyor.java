@@ -15,7 +15,7 @@ public class Conveyor extends SubsystemBase {
   public Conveyor() {}
 
   public void reversa() {
-    motor1.set(frc.robot.Constants.ConveyorConstants.conveyorSpeed);
+    motor1.set(-frc.robot.Constants.ConveyorConstants.conveyorSpeed);
   }
 
   public void reposo() {

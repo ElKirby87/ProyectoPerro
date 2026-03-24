@@ -9,7 +9,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,7 +28,11 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.mecanismos.Conveyor;
 import frc.robot.subsystems.mecanismos.Intake;
 import frc.robot.subsystems.mecanismos.LowShoot;
+<<<<<<< HEAD
 import frc.robot.subsystems.mecanismos.Neumatica;
+=======
+import frc.robot.subsystems.mecanismos.Pneumatics;
+>>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
 import frc.robot.subsystems.mecanismos.Shooter;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -52,7 +55,11 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final LowShoot lowShoot = new LowShoot();
   private final Intake intake = new Intake();
+<<<<<<< HEAD
   private final Neumatica neumatica = new Neumatica();
+=======
+  private final Pneumatics pneumatics = new Pneumatics();
+>>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -135,13 +142,24 @@ public class RobotContainer {
     NamedCommands.registerCommand("Shooter", shooter.autoshoot());
     NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
     NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
-
-    NamedCommands.registerCommand("Intake", intake.autointake(2.0, true));
+    NamedCommands.registerCommand("Estirar intake", pneumatics.EstirarIntake());
+    NamedCommands.registerCommand("Retraer intake", pneumatics.EstirarIntake());
     NamedCommands.registerCommand(
-        "Posicionarse a hub", DriveCommands.driveToHubWithTimeout(drive, 2.25));
+        "Intake corto", intake.autointake(Constants.AutoConstants.intakeSmallSeconds, true));
     NamedCommands.registerCommand(
-        "Disparar", ShootCommands.shoot(shooter, conveyor, lowShoot, intake, 7));
-
+        "Intake largo", intake.autointake(Constants.AutoConstants.intakeLargeSeconds, true));
+    NamedCommands.registerCommand(
+        "Posicionarse a hub",
+        DriveCommands.driveToHubWithTimeout(
+            drive, shooter, Constants.AutoConstants.shootingSeconds));
+    NamedCommands.registerCommand(
+        "Disparo",
+        ShootCommands.Conveyor(
+            conveyor,
+            lowShoot,
+            intake,
+            (Constants.AutoConstants.shootingSeconds
+                - Constants.AutoConstants.shootingWaitSeconds)));
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -187,20 +205,21 @@ public class RobotContainer {
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> Rotation2d.kZero));
+    /*controller
+    .a()
+    .whileTrue(
+        DriveCommands.joystickDriveAtAngle(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> Rotation2d.kZero));
+             */
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     controller
-        .start()
+        .rightStick()
         .onTrue(
             // Before: reset pose orientation. Now: define current robot angle as 0 for controls.
             Commands.runOnce(
@@ -209,6 +228,7 @@ public class RobotContainer {
                     },
                     drive)
                 .ignoringDisable(true));
+<<<<<<< HEAD
     /*controller
     .leftTrigger()
     .whileTrue(
@@ -216,6 +236,8 @@ public class RobotContainer {
             DriveCommands.driveToHub(
                 drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()),
             shooter.Activar())); */
+=======
+>>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
     controller
         .leftTrigger()
         .whileTrue(
@@ -224,9 +246,15 @@ public class RobotContainer {
     controller.rightBumper().whileTrue(intake.moverse(true));
     controller.leftBumper().whileTrue(intake.moverse(false));
     controller.rightTrigger().whileTrue(ShootCommands.Conveyor(conveyor, lowShoot, intake));
+<<<<<<< HEAD
     controller.leftStick().onTrue(DriveCommands.ChangeFollowing());
     controller.povDown().onTrue(neumatica.SacaIntake());
     controller.povUp().onTrue(neumatica.enableCompressor());
+=======
+    controller.leftStick().onTrue(DriveCommands.ChangeFollowing(drive));
+    controller.povUp().onTrue(pneumatics.toogleCommand());
+    controller.povDown().onTrue(pneumatics.enableCompressor());
+>>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
     /*controller

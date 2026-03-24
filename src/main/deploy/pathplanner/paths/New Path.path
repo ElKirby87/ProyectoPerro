@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.140798858773181,
-        "y": 5.904636233951498
+        "x": 3.6912891566265067,
+        "y": 5.9473493975903615
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2640175020824602,
-        "y": 5.638936327648511
+        "x": 3.308819277108434,
+        "y": 5.980132530120482
       },
       "isLocked": false,
-      "linkedName": "end2"
+      "linkedName": "Inicio4D"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 3.75
+        "x": 2.434602409638554,
+        "y": 5.586734939759037
       },
       "prevControl": {
-        "x": 1.90132321452043,
-        "y": 3.979701745764848
+        "x": 2.7187228915662653,
+        "y": 6.06755421686747
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "end3"
+      "linkedName": "Inicio4DEnd"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -34.72464183512188
   },
   "reversed": false,
-  "folder": "Auto1Iz",
+  "folder": "Auto4Dr",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

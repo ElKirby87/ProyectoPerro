@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.140798858773181,
-        "y": 5.904636233951498
+        "x": 7.767325301204821,
+        "y": 3.34655421686747
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2640175020824602,
-        "y": 5.638936327648511
+        "x": 7.7345421686746985,
+        "y": 1.6964698795180724
       },
       "isLocked": false,
-      "linkedName": "end2"
+      "linkedName": "pelotas3I"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 3.75
+        "x": 6.871253012048193,
+        "y": 0.6146265060240967
       },
       "prevControl": {
-        "x": 1.90132321452043,
-        "y": 3.979701745764848
+        "x": 7.86567469879518,
+        "y": 0.8222530120481917
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "end3"
+      "linkedName": "PasaTrinchera3I"
     }
   ],
   "rotationTargets": [],
@@ -45,10 +45,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Auto1Iz",
+  "folder": "Auto3Iz",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

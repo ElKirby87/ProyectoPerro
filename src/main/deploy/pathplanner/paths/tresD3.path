@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.140798858773181,
-        "y": 5.904636233951498
+        "x": 3.63796005706134,
+        "y": 7.444336661911555
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2640175020824602,
-        "y": 5.638936327648511
+        "x": 4.63796005706134,
+        "y": 7.444336661911555
       },
       "isLocked": false,
-      "linkedName": "end2"
+      "linkedName": "Inicio3Dr"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 3.75
+        "x": 7.789180722891565,
+        "y": 7.422590361445783
       },
       "prevControl": {
-        "x": 1.90132321452043,
-        "y": 3.979701745764848
+        "x": 6.789180722891565,
+        "y": 7.422590361445783
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "end3"
+      "linkedName": "PasarTrinchera3Dr"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -1.9414863909144
   },
   "reversed": false,
-  "folder": "Auto1Iz",
+  "folder": "Auto3Dr",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 0.6438070122928855
   },
   "useDefaultConstraints": true
 }

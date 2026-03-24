@@ -1,0 +1,115 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.930057061340941,
+        "y": 2.4111982881597713
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0982596291012836,
+        "y": 1.5960627674750354
+      },
+      "isLocked": false,
+      "linkedName": "Disparar2DrEnd"
+    },
+    {
+      "anchor": {
+        "x": 3.52151212553495,
+        "y": 0.7032952924393738
+      },
+      "prevControl": {
+        "x": 2.771069900142653,
+        "y": 0.72917261055635
+      },
+      "nextControl": {
+        "x": 3.7903063073281165,
+        "y": 0.6940265275499542
+      },
+      "isLocked": false,
+      "linkedName": "PasarTrincheraBDr"
+    },
+    {
+      "anchor": {
+        "x": 6.083366619115549,
+        "y": 0.7032952924393738
+      },
+      "prevControl": {
+        "x": 5.023615508845776,
+        "y": 0.7032952924393738
+      },
+      "nextControl": {
+        "x": 7.143117729385322,
+        "y": 0.7032952924393738
+      },
+      "isLocked": false,
+      "linkedName": "PasarTrincheraADr"
+    },
+    {
+      "anchor": {
+        "x": 8.282938659058486,
+        "y": 1.5572467902995721
+      },
+      "prevControl": {
+        "x": 8.282938659058486,
+        "y": 0.9648006461034603
+      },
+      "nextControl": {
+        "x": 8.282938659058486,
+        "y": 2.1137595590019735
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.282938659058486,
+        "y": 3.3427817403708993
+      },
+      "prevControl": {
+        "x": 8.282938659058486,
+        "y": 2.759967314921166
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8323699421965182,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.9499036608863176,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 2.951830443159923,
+      "rotationDegrees": -90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.15,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "Auto2Dr",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 31.45206101199952
+  },
+  "useDefaultConstraints": true
+}
