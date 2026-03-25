@@ -28,11 +28,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.mecanismos.Conveyor;
 import frc.robot.subsystems.mecanismos.Intake;
 import frc.robot.subsystems.mecanismos.LowShoot;
-<<<<<<< HEAD
-import frc.robot.subsystems.mecanismos.Neumatica;
-=======
 import frc.robot.subsystems.mecanismos.Pneumatics;
->>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
 import frc.robot.subsystems.mecanismos.Shooter;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -55,11 +51,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final LowShoot lowShoot = new LowShoot();
   private final Intake intake = new Intake();
-<<<<<<< HEAD
-  private final Neumatica neumatica = new Neumatica();
-=======
   private final Pneumatics pneumatics = new Pneumatics();
->>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -228,16 +220,6 @@ public class RobotContainer {
                     },
                     drive)
                 .ignoringDisable(true));
-<<<<<<< HEAD
-    /*controller
-    .leftTrigger()
-    .whileTrue(
-        new ParallelCommandGroup(
-            DriveCommands.driveToHub(
-                drive, shooter, () -> controller.getLeftY(), () -> controller.getLeftX()),
-            shooter.Activar())); */
-=======
->>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
     controller
         .leftTrigger()
         .whileTrue(
@@ -246,15 +228,9 @@ public class RobotContainer {
     controller.rightBumper().whileTrue(intake.moverse(true));
     controller.leftBumper().whileTrue(intake.moverse(false));
     controller.rightTrigger().whileTrue(ShootCommands.Conveyor(conveyor, lowShoot, intake));
-<<<<<<< HEAD
-    controller.leftStick().onTrue(DriveCommands.ChangeFollowing());
-    controller.povDown().onTrue(neumatica.SacaIntake());
-    controller.povUp().onTrue(neumatica.enableCompressor());
-=======
     controller.leftStick().onTrue(DriveCommands.ChangeFollowing(drive));
     controller.povUp().onTrue(pneumatics.toogleCommand());
     controller.povDown().onTrue(pneumatics.enableCompressor());
->>>>>>> 42a1de46a824d82d7c297cf8366d51083c8e4a86
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
     /*controller
