@@ -69,13 +69,13 @@ public final class Constants {
 
     public static final double supplierPercent = 0.6;
 
-    public static final double kTranslationKp = 12.0;
+    public static final double kTranslationKp = 17.0;
     public static final double kTranslationKi = 0.0;
-    public static final double kTranslationKd = 0.3;
+    public static final double kTranslationKd = 0.5;
 
-    public static final double kRotationKp = 12.0;
+    public static final double kRotationKp = 17.0;
     public static final double kRotationKi = 0.0;
-    public static final double kRotationKd = 0.3;
+    public static final double kRotationKd = 0.5;
   }
 
   public static class IntakeConstants {

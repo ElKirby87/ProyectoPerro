@@ -10,13 +10,14 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Pneumatics extends SubsystemBase {
   /** Creates a new Pneumatics. */
   private final Compressor compressor;
 
-  private final Solenoid solenoideClimb = new Solenoid(PneumaticsModuleType.REVPH, 5);
+  private final Solenoid compuerta = new Solenoid(PneumaticsModuleType.REVPH, 5);
   private final Solenoid brazoDerechaSolenoide = new Solenoid(PneumaticsModuleType.REVPH, 6);
   private final Solenoid brazoIzquierdaSolenoide = new Solenoid(PneumaticsModuleType.REVPH, 7);
   AnalogPotentiometer pressureSensore = new AnalogPotentiometer(0, 150, -25);
@@ -24,12 +25,22 @@ public class Pneumatics extends SubsystemBase {
 
   public Pneumatics() {
     compressor = new Compressor(PneumaticsModuleType.REVPH);
-    compressor.enableDigital();
+    compressor.disable();
+    // compuerta.set(true);
+  }
+
+  public void setCompuerta(Boolean isOpen) {
+    compuerta.set(isOpen);
+  }
+
+  public void toggleCompuerta() {
+    compuerta.toggle();
   }
 
   public void estirarIntake() {
     brazoDerechaSolenoide.set(true);
     brazoIzquierdaSolenoide.set(true);
+    compuerta.set(true);
   }
 
   public void retraerIntake() {
@@ -40,10 +51,27 @@ public class Pneumatics extends SubsystemBase {
   public void toggleSolenoidState() {
     brazoDerechaSolenoide.toggle();
     brazoIzquierdaSolenoide.toggle();
-    solenoideClimb.toggle();
     // solenoid1.set(isOn);
     // solenoid2.set(isOn);
     // solenoid3.set(isOn);
+  }
+
+  public Command toggleCompuerta(Boolean isOn) {
+    return new Command() {
+      @Override
+      public void execute() {
+        if (isOn) {
+          compuerta.set(true);
+        } else {
+          compuerta.set(false);
+        }
+      }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
   }
 
   public Command EstirarIntake() {
@@ -61,10 +89,22 @@ public class Pneumatics extends SubsystemBase {
   }
 
   public Command RetraerIntake() {
+    return Commands.run(
+            () -> {
+              retraerIntake();
+            })
+        .withTimeout(3)
+        .finallyDo(
+            () -> {
+              compuerta.set(false);
+            });
+  }
+
+  public Command toogleCommand() {
     return new Command() {
       @Override
       public void execute() {
-        retraerIntake();
+        toggleSolenoidState();
       }
 
       @Override
@@ -74,11 +114,11 @@ public class Pneumatics extends SubsystemBase {
     };
   }
 
-  public Command toogleCommand() {
+  public Command abrirCompuerta() {
     return new Command() {
       @Override
       public void execute() {
-        toggleSolenoidState();
+        toggleCompuerta();
       }
 
       @Override

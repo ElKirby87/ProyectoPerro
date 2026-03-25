@@ -135,7 +135,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("LowShooter", lowShoot.autolowshoot());
     NamedCommands.registerCommand("Conveyor", conveyor.autoconv());
     NamedCommands.registerCommand("Estirar intake", pneumatics.EstirarIntake());
-    NamedCommands.registerCommand("Retraer intake", pneumatics.EstirarIntake());
+    NamedCommands.registerCommand("Retraer intake", pneumatics.RetraerIntake());
     NamedCommands.registerCommand(
         "Intake corto", intake.autointake(Constants.AutoConstants.intakeSmallSeconds, true));
     NamedCommands.registerCommand(
@@ -152,6 +152,8 @@ public class RobotContainer {
             intake,
             (Constants.AutoConstants.shootingSeconds
                 - Constants.AutoConstants.shootingWaitSeconds)));
+    NamedCommands.registerCommand("Encender compuerta", pneumatics.toggleCompuerta(true));
+    NamedCommands.registerCommand("Apagar compuerta", pneumatics.toggleCompuerta(false));
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -229,8 +231,10 @@ public class RobotContainer {
     controller.leftBumper().whileTrue(intake.moverse(false));
     controller.rightTrigger().whileTrue(ShootCommands.Conveyor(conveyor, lowShoot, intake));
     controller.leftStick().onTrue(DriveCommands.ChangeFollowing(drive));
-    controller.povUp().onTrue(pneumatics.toogleCommand());
+    controller.povLeft().onTrue(pneumatics.RetraerIntake());
+    controller.povRight().onTrue(pneumatics.EstirarIntake());
     controller.povDown().onTrue(pneumatics.enableCompressor());
+    controller.povUp().onTrue(pneumatics.abrirCompuerta());
 
     // controller.rightBumper().whileTrue(conveyor.rcond());
     /*controller
